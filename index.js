@@ -2,6 +2,7 @@ const express = require('express')
 
 const PORT = 3001
 const app = express()
+app.use(express.json())
 
 
 let persons = [
@@ -111,6 +112,39 @@ app.delete(
                 return person.id !== id
             }
         )
+        response
+            .status(200)
+            .end()
+    }
+)
+
+// post requests
+
+// new note
+app.post(
+    '/api/persons', (request, response) => {
+
+        // generating random, valid ID
+        let id = 0
+        do {
+            id = Math.floor(Math.random()*10000000000)
+        }
+        while(
+            persons.find(
+                person => {
+                    return person.id === id
+                }
+            )
+        )
+        //saving person to object then adding to persons
+        const body = request.body
+        
+        const personObj = {
+            id,
+            "name": body.name,
+            "number": body.number
+        }
+        persons = persons.concat(personObj)
         response
             .status(200)
             .end()

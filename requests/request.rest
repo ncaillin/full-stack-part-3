@@ -1,3 +1,30 @@
 DELETE http://localhost:3001/api/persons/2
 ###
 DELETE http://localhost:3001/api/persons/7
+###
+//Valid POST
+POST http://localhost:3001/api/persons
+Content-Type: application/json 
+
+{
+    "name": "Mickey Mouse",
+    "number": "1234056"
+}
+###
+//invalid POST (no number)
+POST http://localhost:3001/api/persons
+Content-Type: application/json
+
+{
+    "name": "Mickey Mouse"
+}
+###
+//invalid POST (duplicate name)
+POST http://localhost:3001/api/persons
+Content-Type: application/json
+
+{
+    "name": "Arto Hellas", 
+    "number": "040-123456"
+}
+###
