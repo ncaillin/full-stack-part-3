@@ -1,8 +1,12 @@
 const express = require('express')
 var morgan = require('morgan')
+var cors = require('cors')
 
-const PORT = 3001
-const app = express()
+const PORT = process.env.PORT || 8080
+var app = express()
+
+
+app.use(cors())
 app.use(express.json())
 app.use(
     morgan( //morgan for logging of requests
