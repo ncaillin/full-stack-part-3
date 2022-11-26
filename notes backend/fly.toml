@@ -1,6 +1,6 @@
-# fly.toml file generated for snowy-sun-1083 on 2022-11-26T17:42:13+11:00
+# fly.toml file generated for summer-sunset-3905 on 2022-11-26T20:54:56+11:00
 
-app = "snowy-sun-1083"
+app = "summer-sunset-3905"
 kill_signal = "SIGINT"
 kill_timeout = 5
 processes = []
