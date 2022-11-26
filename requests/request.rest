@@ -16,7 +16,7 @@ POST http://localhost:3001/api/persons
 Content-Type: application/json
 
 {
-    "name": "Mickey Mouse"
+    "name": "Donald Duck"
 }
 ###
 //invalid POST (duplicate name)

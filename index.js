@@ -41,6 +41,29 @@ const info = () => {
     )
 }
 
+// validate entries to phonebook
+const isValidPerson = (entry) => {
+    const returnObj = {
+        "nameNotDuplicate": false,
+        "numberExists": false
+    }
+    if (
+        !persons.find(
+            person => {
+                return person.name === entry.name
+            }
+        )
+    ) {
+        returnObj.nameNotDuplicate = true
+    }
+
+    if (entry.number) {
+        returnObj.numberExists = true
+    }
+    
+    return returnObj
+}
+
 
 // get requests
 
@@ -123,6 +146,23 @@ app.delete(
 // new note
 app.post(
     '/api/persons', (request, response) => {
+        const body = request.body
+        validity = isValidPerson(body)
+
+        if (!(validity.nameNotDuplicate && validity.numberExists)) {
+            if (!validity.nameNotDuplicate) {
+                return (
+                    response
+                        .status(400)
+                        .json({error: 'name must be unique'})
+                )
+            }
+            return (
+                response
+                    .status(400)
+                    .json({error: 'number must be added'})
+            )
+        }
 
         // generating random, valid ID
         let id = 0
@@ -136,8 +176,9 @@ app.post(
                 }
             )
         )
+        
+
         //saving person to object then adding to persons
-        const body = request.body
         
         const personObj = {
             id,
