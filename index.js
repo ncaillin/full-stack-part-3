@@ -4,7 +4,29 @@ var morgan = require('morgan')
 const PORT = 3001
 const app = express()
 app.use(express.json())
-app.use(morgan('tiny'))
+app.use(
+    morgan(
+        (tokens, request, response) => {
+            return [
+                tokens.method(request, response),
+                tokens.url(request, response),
+                tokens.status(request, response),
+                tokens.res(request, response, 'content-length'), '-',
+                tokens['response-time'](request, response), 'ms',
+                tokens.data(request, response)
+            ].join(' ')
+        }
+    )
+)
+
+morgan.token(
+    'data',
+    (request, response) => {
+        return ""
+    }
+)
+
+
 
 let persons = [
     { 
@@ -118,12 +140,15 @@ app.get(
 app.delete(
     '/api/persons/:id', (request, response) => {
         id = Number(request.params.id)
+
+        personToRemove = persons.find(
+            person => {
+                return person.id === id
+            }
+        )
+
         if ( // returns false if person does not exist, undef is falsey
-            !persons.find(
-                person => {
-                    return person.id === id
-                }
-            )
+            !personToRemove
         ) {
             return (
                 response
@@ -137,6 +162,7 @@ app.delete(
             }
         )
         response
+            .send(`${JSON.stringify(personToRemove)}`)
             .status(200)
             .end()
     }
@@ -147,6 +173,14 @@ app.delete(
 // new note
 app.post(
     '/api/persons', (request, response) => {
+
+        morgan.token( // morgan token to display content
+            'data',
+            (request, response) => {
+                return JSON.stringify(request.body)
+            }
+        )
+
         const body = request.body
         validity = isValidPerson(body)
 
@@ -188,6 +222,7 @@ app.post(
         }
         persons = persons.concat(personObj)
         response
+            .send(`${JSON.stringify(personObj)}`)
             .status(200)
             .end()
     }
