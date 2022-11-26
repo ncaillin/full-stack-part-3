@@ -27,6 +27,19 @@ const persons = [
     }
 ]
 
+// processing
+const info = () => {
+    const numPeople = persons.length
+    const date = new Date()
+
+    return (
+        {
+            numPeople,
+            date
+        }
+    )
+}
+
 
 // get requests
 
@@ -48,6 +61,17 @@ app.get(
             .end()
     }
 )
+
+app.get(
+    '/info', (request, response) => {
+        const reqInfo = info()
+        response.write(`<p>Phonebook has info for ${reqInfo.numPeople} people</p>`)
+        response.write(`<p>${reqInfo.date}</p>`)
+        response.status(200)
+        response.end()
+    }
+)
+
 
 
 // server setup
