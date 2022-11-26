@@ -1,5 +1,16 @@
+// all persons
+GET http://localhost:3001/api/persons
+###
+// one person
+GET http://localhost:3001/api/persons/2
+###
+//invalid person
+GET http://localhost:3001/api/persons/7
+###
+// valid Delete
 DELETE http://localhost:3001/api/persons/2
 ###
+//invalid delete
 DELETE http://localhost:3001/api/persons/7
 ###
 //Valid POST
