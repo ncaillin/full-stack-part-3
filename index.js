@@ -5,7 +5,7 @@ const PORT = 3001
 const app = express()
 app.use(express.json())
 app.use(
-    morgan(
+    morgan( //morgan for logging of requests
         (tokens, request, response) => {
             return [
                 tokens.method(request, response),
@@ -19,6 +19,7 @@ app.use(
     )
 )
 
+// default val for data so requests other than POST don't show {}
 morgan.token(
     'data',
     (request, response) => {
