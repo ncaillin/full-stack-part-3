@@ -51,6 +51,22 @@ const info = () => {
     )
 }
 
+// put requests
+
+app.put(
+    '/api/persons/:id', (request, response, next) => {
+        
+        id = request.body.id
+        Person
+            .findByIdAndUpdate(id, {number: request.body.number})
+            .then(result => {
+                response.status(200).json(request).end()
+            })
+            .catch((err) => next(err))
+
+    }
+)
+
 
 
 // get requests
