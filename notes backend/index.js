@@ -27,6 +27,8 @@ app.use(
     )
 )
 
+
+
 // default val for data so requests other than POST don't show {}
 morgan.token(
     'data',
@@ -56,7 +58,7 @@ const info = () => {
 
 // json of all people in persons
 app.get(
-    '/api/persons', (request, response) => {
+    '/api/persons', (request, response, next) => {
 
         Person.find({})
             .then(
@@ -64,59 +66,48 @@ app.get(
                     response.json(persons)
                 }
             )
-            .catch((err) => console.log(err.message))
+            .catch((err) => next(err))
     }
 )
 
 //single phonebook, returns status 200 if found, 204 if not
 app.get(
-    '/api/persons/:id', (request, response) => {
+    '/api/persons/:id', (request, response, next) => {
 
         Person
             .findById(request.params.id)
             .then(
                 result => {
-                    response.json(result)
+                    if (result) {
+                        response.json(result)
+                    } else {
+                        response.status(204).end()
+                    }
                 }
             )
             .catch(err => {
-                console.log('person not found')
-                response
-                    .status(204)
-                    .end()
+                next(err)
             })
     }
 )
 
 // delete request response 200 if existed, 204 if resource did not exist
 app.delete(
-    '/api/persons/:id', (request, response) => {
-        id = Number(request.params.id)
+    '/api/persons/:id', (request, response, next) => {
+        id = request.params.id
+        
+        Person
+            .findByIdAndRemove(id)
+            .then(result => {
+                if (result) {
+                    response.json(result)
+                } else {
+                    response.status(204).end()
+                }
+            })
+            .catch((err) => next(err))
 
-        personToRemove = persons.find(
-            person => {
-                return person.id === id
-            }
-        )
-
-        if ( // returns false if person does not exist, undef is falsey
-            !personToRemove
-        ) {
-            return (
-                response
-                    .status(204)
-                    .end()
-            )
-        }
-        persons = persons.filter(
-            person => {
-                return person.id !== id
-            }
-        )
-        response
-            .send(`${JSON.stringify(personToRemove)}`)
-            .status(200)
-            .end()
+        
     }
 )
 
@@ -124,7 +115,7 @@ app.delete(
 
 // new note
 app.post(
-    '/api/persons', (request, response) => {
+    '/api/persons', (request, response, next) => {
 
         morgan.token( // morgan token to display content
             'data',
@@ -147,7 +138,7 @@ app.post(
             .then(savedPerson => {
                 response.json(savedPerson)
             })
-            .catch((err) => console.log(err.message))
+            .catch((err) => next(err))
     }
 )
 
@@ -165,6 +156,14 @@ app.get(
     }
 )
 
+// error handler
+
+const errorHandler = (error, request, response, next) => {
+    console.error(error.message)
+    if (error.name === 'CastError') {
+        return response.status(400).send({error: 'malformatted ID'}).end()
+    }
+}
 
 
 
@@ -175,4 +174,6 @@ app.listen(
         console.log(`\x1b[35mPhonebook backend running on port ${PORT}\x1b[0m`)
     }
 )
+
+app.use(errorHandler)
 
