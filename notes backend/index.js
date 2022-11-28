@@ -38,19 +38,6 @@ morgan.token(
 )
 
 
-// processing
-const info = () => {
-    const numPeople = persons.length
-    const date = new Date()
-
-    return (
-        {
-            numPeople,
-            date
-        }
-    )
-}
-
 // put requests
 
 app.put(
@@ -70,6 +57,28 @@ app.put(
 
 
 // get requests
+
+// info page
+app.get(
+    '/info', (request, response, next) => {
+
+        Person
+            .find({})
+            .then(result => {
+                response.write(`<p>Phonebook has info for ${result.length} people</p>`)
+                response.write(`<p>${new Date()}</p>`)
+                response.status(200)
+                response.end()
+            })
+
+        /*
+
+        const reqInfo = info()
+        
+        */
+
+    }
+)
 
 
 // json of all people in persons
@@ -159,18 +168,7 @@ app.post(
 )
 
 
-// info page
-app.get(
-    '/info', (request, response) => {
 
-        const reqInfo = info()
-        response.write(`<p>Phonebook has info for ${reqInfo.numPeople} people</p>`)
-        response.write(`<p>${reqInfo.date}</p>`)
-        response.status(200)
-        response.end()
-
-    }
-)
 
 // error handler
 
