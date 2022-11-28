@@ -2,13 +2,13 @@
 GET http://localhost:8080/api/persons
 ###
 // one person
-GET http://localhost:8080/api/persons/6382d2b05070e5a9434dfb1c
+GET http://localhost:8080/api/persons/63846824d1ca26386ca9189e
 ###
 //invalid person
 GET http://localhost:8080/api/persons/7
 ###
 // valid Delete
-DELETE http://localhost:8080/api/persons/2
+DELETE http://localhost:8080/api/persons/63846824d1ca26386ca9189e
 ###
 //invalid delete
 DELETE http://localhost:8080/api/persons/7
