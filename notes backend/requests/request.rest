@@ -19,7 +19,7 @@ Content-Type: application/json
 
 {
     "name": "Minnie Mouse",
-    "number": "1234056"
+    "number": "12-34056"
 }
 ###
 //invalid POST (no number)
@@ -39,3 +39,11 @@ Content-Type: application/json
     "number": "040-123456"
 }
 ###
+//invalid POST (name < 3
+POST http://localhost:8080/api/persons
+Content-Type: application/json
+
+{
+    "name": "fo",
+    "number": "123141"
+}
