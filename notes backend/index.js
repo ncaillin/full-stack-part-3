@@ -1,6 +1,10 @@
+require('dotenv').config()
 const express = require('express')
 var morgan = require('morgan')
 var cors = require('cors')
+const Person = require('./models/person')
+const person = require('./models/person')
+
 
 const PORT = process.env.PORT || 8080
 var app = express()
@@ -32,30 +36,6 @@ morgan.token(
 )
 
 
-
-let persons = [
-    { 
-      "id": 1,
-      "name": "Arto Hellas", 
-      "number": "040-123456"
-    },
-    { 
-      "id": 2,
-      "name": "Ada Lovelace", 
-      "number": "39-44-5323523"
-    },
-    { 
-      "id": 3,
-      "name": "Dan Abramov", 
-      "number": "12-43-234345"
-    },
-    { 
-      "id": 4,
-      "name": "Mary Poppendieck", 
-      "number": "39-23-6423122"
-    }
-]
-
 // processing
 const info = () => {
     const numPeople = persons.length
@@ -69,48 +49,22 @@ const info = () => {
     )
 }
 
-// validate entries to phonebook
-const isValidPerson = (entry) => {
-    const returnObj = {
-        "nameNotDuplicate": false,
-        "numberExists": false
-    }
-    if (
-        !persons.find(
-            person => {
-                return person.name === entry.name
-            }
-        )
-    ) {
-        returnObj.nameNotDuplicate = true
-    }
-
-    if (entry.number) {
-        returnObj.numberExists = true
-    }
-    
-    return returnObj
-}
 
 
 // get requests
 
-// preventing favicon.ico error
-app.get(
-    '/favicon.ico', (request, response) => {
-        response
-            .status(204)
-            .end()
-    }
-)
 
 // json of all people in persons
 app.get(
     '/api/persons', (request, response) => {
-        response
-            .json(persons)
-            .status(200)
-            .end()
+
+        Person.find({})
+            .then(
+                persons => {
+                    response.json(persons)
+                }
+            )
+            .catch((err) => console.log(err.message))
     }
 )
 
@@ -118,26 +72,19 @@ app.get(
 app.get(
     '/api/persons/:id', (request, response) => {
 
-        const id = Number(request.params.id)
-
-        const person = persons.find(
-            person => {
-                return person.id === id
-            }
-        )
-        if (!person) { //person is undefined if not existing, undefined is falsey
-            return (
+        Person
+            .findById(request.params.id)
+            .then(
+                result => {
+                    response.json(result)
+                }
+            )
+            .catch(err => {
+                console.log('person not found')
                 response
                     .status(204)
                     .end()
-            )
-        }
-
-        response
-            .json(person)
-            .status(200)
-            .end()
-
+            })
     }
 )
 
@@ -187,49 +134,20 @@ app.post(
         )
 
         const body = request.body
-        validity = isValidPerson(body)
-
-        if (!(validity.nameNotDuplicate && validity.numberExists)) {
-            if (!validity.nameNotDuplicate) {
-                return (
-                    response
-                        .status(400)
-                        .json({error: 'name must be unique'})
-                )
-            }
-            return (
-                response
-                    .status(400)
-                    .json({error: 'number must be added'})
-            )
-        }
-
-        // generating random, valid ID
-        let id = 0
-        do {
-            id = Math.floor(Math.random()*10000000000)
-        }
-        while(
-            persons.find(
-                person => {
-                    return person.id === id
-                }
-            )
-        )
-        
 
         //saving person to object then adding to persons
-        
-        const personObj = {
-            id,
-            "name": body.name,
-            "number": body.number
-        }
-        persons = persons.concat(personObj)
-        response
-            .send(`${JSON.stringify(personObj)}`)
-            .status(200)
-            .end()
+        const person = new Person(
+            {
+                name: body.name,
+                number: body.number,
+            }
+        )
+        person
+            .save()
+            .then(savedPerson => {
+                response.json(savedPerson)
+            })
+            .catch((err) => console.log(err.message))
     }
 )
 

@@ -1,29 +1,29 @@
 // all persons
-GET http://localhost:3001/api/persons
+GET http://localhost:8080/api/persons
 ###
 // one person
-GET http://localhost:3001/api/persons/2
+GET http://localhost:8080/api/persons/6382d2b05070e5a9434dfb1c
 ###
 //invalid person
-GET http://localhost:3001/api/persons/7
+GET http://localhost:8080/api/persons/7
 ###
 // valid Delete
-DELETE http://localhost:3001/api/persons/2
+DELETE http://localhost:8080/api/persons/2
 ###
 //invalid delete
-DELETE http://localhost:3001/api/persons/7
+DELETE http://localhost:8080/api/persons/7
 ###
 //Valid POST
-POST http://localhost:3001/api/persons
+POST http://localhost:8080/api/persons
 Content-Type: application/json 
 
 {
-    "name": "Mickey Mouse",
+    "name": "Minnie Mouse",
     "number": "1234056"
 }
 ###
 //invalid POST (no number)
-POST http://localhost:3001/api/persons
+POST http://localhost:8080/api/persons
 Content-Type: application/json
 
 {
@@ -31,7 +31,7 @@ Content-Type: application/json
 }
 ###
 //invalid POST (duplicate name)
-POST http://localhost:3001/api/persons
+POST http://localhost:8080/api/persons
 Content-Type: application/json
 
 {
