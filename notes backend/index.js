@@ -41,12 +41,11 @@ morgan.token(
 
 app.put(
   '/api/persons/:id', (request, response, next) => {
-        
     const id = request.body.id
     Person
       .findByIdAndUpdate(id, {number: request.body.number})
       .then(() => {
-        response.status(200).json(request).end()
+        response.status(200).json(request.body).end()
       })
       .catch((err) => next(err))
 
